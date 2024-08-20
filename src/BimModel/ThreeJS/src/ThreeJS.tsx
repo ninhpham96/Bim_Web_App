@@ -21,8 +21,8 @@ CameraControls.install({
 });
 
 export class ThreeJS implements OBC.Disposable {
+  static instance: ThreeJS;
   onDisposed: OBC.Event<unknown> = new OBC.Event();
-
   private _scene: THREE.Scene = new THREE.Scene();
   private _perspectiveCamera!: THREE.PerspectiveCamera;
   private _orthographicCamera!: THREE.OrthographicCamera;
@@ -43,6 +43,13 @@ export class ThreeJS implements OBC.Disposable {
     this._perspectiveCamera ??= this.initperspectiveCamera();
     this._orthographicCamera ??= this.initOrthographicCamera();
     this.currentCamera = projection ? this._perspectiveCamera : this._orthographicCamera;
+  }
+  static getInstance(): ThreeJS | null {
+    if (!ThreeJS.instance) return null;
+    return ThreeJS.instance;
+  }
+  get scene() {
+    return this._scene;
   }
   get projection() {
     return this._projection;
@@ -106,11 +113,9 @@ export class ThreeJS implements OBC.Disposable {
   }
   private animate = () => {
     if (!this._renderer || !this.currentCamera || !this._labelRenderer || !this._labelRenderer) return;
-    const update = this._cameraControls.update(this.clock.getElapsedTime());
-    if (update) {
-      this._renderer.render(this._scene, this.currentCamera);
-      this._renderer.setAnimationLoop(this.animate);
-    }
+    this._cameraControls.update(this.clock.getElapsedTime());
+    this._renderer.render(this._scene, this.currentCamera);
+    this._renderer.setAnimationLoop(this.animate);
   }
   private initTool() {
     this._axesHelper = new THREE.AxesHelper(5);
