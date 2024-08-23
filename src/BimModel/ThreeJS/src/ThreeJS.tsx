@@ -19,9 +19,8 @@ CameraControls.install({
     MathUtils: THREE.MathUtils,
   }
 });
-
+let instance: ThreeJS | null = null;
 export class ThreeJS implements OBC.Disposable {
-  static instance: ThreeJS;
   onDisposed: OBC.Event<unknown> = new OBC.Event();
   private _scene: THREE.Scene = new THREE.Scene();
   private _perspectiveCamera!: THREE.PerspectiveCamera;
@@ -44,10 +43,6 @@ export class ThreeJS implements OBC.Disposable {
     this._orthographicCamera ??= this.initOrthographicCamera();
     this.currentCamera = projection ? this._perspectiveCamera : this._orthographicCamera;
   }
-  static getInstance(): ThreeJS | null {
-    if (!ThreeJS.instance) return null;
-    return ThreeJS.instance;
-  }
   get scene() {
     return this._scene;
   }
@@ -59,6 +54,9 @@ export class ThreeJS implements OBC.Disposable {
     else window.removeEventListener('resize', this.onResize);
   }
   constructor(private container: HTMLElement, private canvas: HTMLCanvasElement) {
+    if (instance) return instance;
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
+    instance = this;
     this.projection = true;
     this._renderer = this.initRenderer();
     this._labelRenderer = this.initLabelRenderer();
@@ -68,8 +66,8 @@ export class ThreeJS implements OBC.Disposable {
     this.setEventResize = true;
   }
   async dispose() {
-    this._renderer.dispose();
-    this._renderer.renderLists.dispose();
+    // this._renderer.dispose();
+    // this._renderer.renderLists.dispose();
     this._labelRenderer.domElement.remove();
     this._cameraControls.dispose();
     this.setEventResize = false;
