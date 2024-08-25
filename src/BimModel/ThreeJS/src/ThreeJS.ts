@@ -2,8 +2,9 @@ import * as THREE from 'three';
 import * as OBC from 'openbim-components';
 import { CSS2DRenderer } from 'three/examples/jsm/renderers/CSS2DRenderer.js';
 import CameraControls from 'camera-controls';
+import { Raycast } from './Raycast';
 
-const pos = new THREE.Vector3(10, 10, 10);
+const pos = new THREE.Vector3(30, 30, 30);
 CameraControls.install({
   THREE: {
     MOUSE: THREE.MOUSE,
@@ -19,7 +20,6 @@ CameraControls.install({
     MathUtils: THREE.MathUtils,
   }
 });
-let instance: ThreeJS | null = null;
 export class ThreeJS implements OBC.Disposable {
   onDisposed: OBC.Event<unknown> = new OBC.Event();
   private _scene: THREE.Scene = new THREE.Scene();
@@ -39,12 +39,15 @@ export class ThreeJS implements OBC.Disposable {
   set projection(projection: boolean) {
     if (this._projection === projection) return;
     this._projection = projection;
-    this._perspectiveCamera ??= this.initperspectiveCamera();
+    this._perspectiveCamera ??= this.initPerspectiveCamera();
     this._orthographicCamera ??= this.initOrthographicCamera();
     this.currentCamera = projection ? this._perspectiveCamera : this._orthographicCamera;
   }
   get scene() {
     return this._scene;
+  }
+  get renderer() {
+    return this._renderer;
   }
   get projection() {
     return this._projection;
@@ -54,28 +57,26 @@ export class ThreeJS implements OBC.Disposable {
     else window.removeEventListener('resize', this.onResize);
   }
   constructor(private container: HTMLElement, private canvas: HTMLCanvasElement) {
-    if (instance) return instance;
-    // eslint-disable-next-line @typescript-eslint/no-this-alias
-    instance = this;
     this.projection = true;
     this._renderer = this.initRenderer();
     this._labelRenderer = this.initLabelRenderer();
     this._cameraControls = this.initCameraControls();
+    this.initRaycast();
     this.initTool();
     this.animate();
     this.setEventResize = true;
   }
   async dispose() {
-    // this._renderer.dispose();
-    // this._renderer.renderLists.dispose();
-    this._labelRenderer.domElement.remove();
-    this._cameraControls.dispose();
     this.setEventResize = false;
+    this._renderer?.dispose();
+    this._renderer?.renderLists.dispose();
+    this._labelRenderer?.domElement.remove();
+    this._cameraControls.dispose();
     await this.onDisposed.trigger();
     this.onDisposed.reset();
     console.log("object disposed");
   }
-  private initperspectiveCamera(): THREE.PerspectiveCamera {
+  private initPerspectiveCamera(): THREE.PerspectiveCamera {
     const { width, height } = this.container.getBoundingClientRect();
     const camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
     camera.position.copy(pos);
@@ -92,7 +93,7 @@ export class ThreeJS implements OBC.Disposable {
     const renderer = new THREE.WebGLRenderer({
       canvas: this.canvas,
       antialias: true,
-      preserveDrawingBuffer: true,
+      preserveDrawingBuffer: true
     });
     renderer.setSize(width, height);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -108,6 +109,9 @@ export class ThreeJS implements OBC.Disposable {
   private initCameraControls(): CameraControls {
     const controls = new CameraControls(this.currentCamera!, this._renderer?.domElement);
     return controls;
+  }
+  private initRaycast() {
+    new Raycast(this._renderer?.domElement, this._scene, this.currentCamera!);
   }
   private animate = () => {
     if (!this._renderer || !this.currentCamera || !this._labelRenderer || !this._labelRenderer) return;
