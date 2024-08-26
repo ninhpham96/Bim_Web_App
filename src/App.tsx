@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { ThreeJS } from "@/BimModel/ThreeJS/src/ThreeJS";
 import { Geometries } from "./BimModel/ThreeJS/src/Geometries";
-import { Road } from "./BimModel/ThreeJS/Road/Road";
+// import { Road } from "./BimModel/ThreeJS/Road/Road";
 
 function App() {
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -9,11 +9,11 @@ function App() {
   useEffect(() => {
     const threeJS = new ThreeJS(containerRef.current!, canvasRef.current!);
     const geometries = new Geometries(threeJS.scene);
-    const road = new Road(threeJS.scene);
+    // const road = new Road(threeJS.scene);
     return () => {
       threeJS?.dispose();
       geometries?.dispose();
-      road?.dispose();
+      // road?.dispose();
     };
   }, [])
   return (

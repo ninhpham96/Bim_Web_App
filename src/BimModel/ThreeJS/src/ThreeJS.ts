@@ -2,7 +2,8 @@ import * as THREE from 'three';
 import * as OBC from 'openbim-components';
 import { CSS2DRenderer } from 'three/examples/jsm/renderers/CSS2DRenderer.js';
 import CameraControls from 'camera-controls';
-import { Raycast } from './Raycast';
+import { Label2D } from '../Label2D/Label2D';
+// import { Raycast } from './Raycast';
 
 const pos = new THREE.Vector3(30, 30, 30);
 CameraControls.install({
@@ -57,11 +58,13 @@ export class ThreeJS implements OBC.Disposable {
     else window.removeEventListener('resize', this.onResize);
   }
   constructor(private container: HTMLElement, private canvas: HTMLCanvasElement) {
+    this._scene.background = new THREE.Color(0xC0DED8);
     this.projection = true;
     this._renderer = this.initRenderer();
     this._labelRenderer = this.initLabelRenderer();
     this._cameraControls = this.initCameraControls();
     this.initRaycast();
+    this.initLabel();
     this.initTool();
     this.animate();
     this.setEventResize = true;
@@ -111,13 +114,16 @@ export class ThreeJS implements OBC.Disposable {
     return controls;
   }
   private initRaycast() {
-    new Raycast(this._renderer?.domElement, this._scene, this.currentCamera!);
+    // new Raycast(this._renderer?.domElement, this._scene, this.currentCamera!);
   }
   private animate = () => {
     if (!this._renderer || !this.currentCamera || !this._labelRenderer || !this._labelRenderer) return;
     this._cameraControls.update(this.clock.getElapsedTime());
     this._renderer.render(this._scene, this.currentCamera);
     this._renderer.setAnimationLoop(this.animate);
+  }
+  initLabel() {
+    new Label2D(this._scene);
   }
   private initTool() {
     this._axesHelper = new THREE.AxesHelper(5);
