@@ -1,11 +1,14 @@
 import * as THREE from 'three';
 import * as OBC from 'openbim-components';
-import { CSS2DRenderer } from 'three/examples/jsm/renderers/CSS2DRenderer.js';
+import { CSS2DRenderer } from 'three/examples/jsm/Addons.js';
 import CameraControls from 'camera-controls';
-import { Label2D } from '../Label2D/Label2D';
+import { LineMaterial } from 'three/examples/jsm/Addons.js';
+import { MeshInstance } from '../MeshInstance/MeshInstance';
+// import { Label2D } from '../Label2D/Label2D';
+// import { MyLine2 } from '../Line2/MyLine2';
 // import { Raycast } from './Raycast';
 
-const pos = new THREE.Vector3(30, 30, 30);
+const pos = new THREE.Vector3(30, 100, 30);
 CameraControls.install({
   THREE: {
     MOUSE: THREE.MOUSE,
@@ -35,6 +38,14 @@ export class ThreeJS implements OBC.Disposable {
   private _axesHelper!: THREE.AxesHelper;
   private _ambientLight!: THREE.AmbientLight;
   private _directionalLight!: THREE.DirectionalLight;
+  private lineMaterial = new LineMaterial({
+    linewidth: 3,
+    vertexColors: true,
+    alphaToCoverage: true,
+    color: 0x0000ff,
+    dashed: false,
+    dashScale: 1,
+  });
 
   private _projection = false;
   set projection(projection: boolean) {
@@ -63,6 +74,7 @@ export class ThreeJS implements OBC.Disposable {
     this._renderer = this.initRenderer();
     this._labelRenderer = this.initLabelRenderer();
     this._cameraControls = this.initCameraControls();
+    this.initMeshInstance();
     this.initRaycast();
     this.initLabel();
     this.initTool();
@@ -113,17 +125,24 @@ export class ThreeJS implements OBC.Disposable {
     const controls = new CameraControls(this.currentCamera!, this._renderer?.domElement);
     return controls;
   }
+  initMeshInstance() {
+    new MeshInstance(this._scene);
+  }
   private initRaycast() {
     // new Raycast(this._renderer?.domElement, this._scene, this.currentCamera!);
   }
   private animate = () => {
     if (!this._renderer || !this.currentCamera || !this._labelRenderer || !this._labelRenderer) return;
+    const { width, height } = this.canvas.getBoundingClientRect();
+    this.lineMaterial.resolution.set(width, height);
     this._cameraControls.update(this.clock.getElapsedTime());
     this._renderer.render(this._scene, this.currentCamera);
     this._renderer.setAnimationLoop(this.animate);
+    this._labelRenderer.render(this._scene, this.currentCamera);
   }
   initLabel() {
-    new Label2D(this._scene);
+    // new Label2D(this._scene);
+    // new MyLine2(this._scene, this.lineMaterial);
   }
   private initTool() {
     this._axesHelper = new THREE.AxesHelper(5);
