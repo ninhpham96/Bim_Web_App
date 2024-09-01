@@ -2,6 +2,7 @@ import * as OBC from 'openbim-components'
 import { generateUUID } from 'three/src/math/MathUtils.js';
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
+import { Decompress } from '@/Compress/DeCompress';
 
 interface IGeometry {
   material: THREE.MeshBasicMaterial;
@@ -38,17 +39,18 @@ export class MyToolComponent extends OBC.Component<unknown> implements OBC.Dispo
   action = () => {
     const input = document.createElement('input');
     input.type = 'file';
-    input.accept = '.json';
+    input.accept = '.gz';
     input.multiple = false;
     input.click();
     input.onchange = async () => {
       const file = input.files?.item(0);
       if (file) {
-        const json = await file.text();
-        const data = JSON.parse(json);
-        console.log('🚀 ~ MyToolComponent ~ input.onchange= ~ data:', data)
-        this.processJsonFile(data);
-        console.log("day la cai quan que gi vay?:", this.mergeMaterials);
+        // const json = await file.text();
+        // const data = JSON.parse(json);
+        // this.processJsonFile(data);
+        const rawBuffer = await file.arrayBuffer();
+        const buffer = new Uint8Array(rawBuffer);
+        await new Decompress().readFile(buffer);
       }
     };
     input.remove();
