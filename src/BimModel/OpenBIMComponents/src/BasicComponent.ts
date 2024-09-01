@@ -40,14 +40,12 @@ export class BasicComponent implements OBC.Disposable {
     scene.matrix.premultiply(matrix).multiply(matrixInverse);
   }
   initMyTool() {
-    this.components.tools.get(MyToolComponent);
+    const myTool = this.components.tools.get(MyToolComponent);
     const toolbars = new OBC.Toolbar(this.components);
     const button = new OBC.Button(this.components);
     button.materialIcon = "add";
     button.tooltip = "My Tool";
-    button.onClick.add(() => {
-      console.log("My Tool clicked");
-    });
+    button.onClick.add(myTool.action);
     toolbars.addChild(button);
     this.components.ui.addToolbar(toolbars);
   }
