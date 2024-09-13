@@ -1,10 +1,10 @@
 import * as OBC from 'openbim-components'
 import { generateUUID } from 'three/src/math/MathUtils.js';
 import * as THREE from 'three';
-import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
-import { Decompress } from '@/Compress/DeCompress';
+import { mergeBufferGeometries } from 'three-stdlib';
+import { Decompress } from '@/Compress_Decompress/Decompress';
 
-interface IGeometry {
+export interface IGeometry {
   material: THREE.MeshBasicMaterial;
   geometries: THREE.BufferGeometry[];
 }
@@ -45,12 +45,15 @@ export class MyToolComponent extends OBC.Component<unknown> implements OBC.Dispo
     input.onchange = async () => {
       const file = input.files?.item(0);
       if (file) {
+        // process json file
         // const json = await file.text();
         // const data = JSON.parse(json);
         // this.processJsonFile(data);
+
+        // process decompressed file
         const rawBuffer = await file.arrayBuffer();
         const buffer = new Uint8Array(rawBuffer);
-        await new Decompress().readFile(buffer);
+        await new Decompress(this.components.scene.get()).readFile(buffer);
       }
     };
     input.remove();
@@ -67,10 +70,10 @@ export class MyToolComponent extends OBC.Component<unknown> implements OBC.Dispo
     this.storageMaterials(materials);
     // process object
     this.storageObject(object.children);
-    // process images
-    this.storageImages(images);
-    // process textures
-    this.storageTextures(textures);
+    // // process images
+    // this.storageImages(images);
+    // // process textures
+    // this.storageTextures(textures);
   }
   storageGeometries(geometries: unknown[]) {
     for (const geometry of geometries) {
@@ -134,22 +137,22 @@ export class MyToolComponent extends OBC.Component<unknown> implements OBC.Dispo
     for (const uuid in geometriesOfMaterials) {
       const { material, geometries } = geometriesOfMaterials[uuid];
       if (geometries.length === 0) continue;
-      const merged = mergeGeometries(geometries);
+      const merged = mergeBufferGeometries(geometries);
       if (!merged) throw new Error('Cannot merge geometries');
       mergedGeometries.push(merged);
       mergedMaterials.push(material);
       geometries.forEach(geometry => geometry.dispose());
     }
     if (mergedGeometries.length === 0) return;
-    const combine = mergeGeometries(mergedGeometries, true);
+    const combine = mergeBufferGeometries(mergedGeometries, true);
     if (!combine) throw new Error('Cannot merge geometries');
     const mesh = new THREE.Mesh(combine, mergedMaterials);
     mergedGeometries.forEach(geometry => geometry.dispose());
     this.components.scene.get().add(mesh);
   }
-  storageTextures(textures: unknown[]) {
-  }
-  storageImages(images: unknown[]) {
-  }
+  // storageTextures(textures: unknown[]) {
+  // }
+  // storageImages(images: unknown[]) {
+  // }
 }
 OBC.ToolComponent.libraryUUIDs.add(MyToolComponent.uuid);

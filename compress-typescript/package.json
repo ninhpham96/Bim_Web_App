@@ -1,0 +1,28 @@
+{
+  "name": "compress-typescript",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "node  --no-warnings=ExperimentalWarning --loader ts-node/esm src/index.ts",
+    "build": "npx tsc "
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^22.5.4",
+    "@types/pako": "^2.0.3",
+    "@types/three": "^0.168.0",
+    "nodemon": "^3.1.4",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.3"
+  },
+  "dependencies": {
+    "flatbuffers": "^23.5.26",
+    "pako": "^2.1.0",
+    "three-stdlib": "^2.32.2"
+  }
+}
