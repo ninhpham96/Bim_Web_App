@@ -1,6 +1,6 @@
 import * as OBC from 'openbim-components'
-import { generateUUID } from 'three/src/math/MathUtils.js';
 import * as THREE from 'three';
+import { generateUUID } from 'three/src/math/MathUtils.js';
 import { mergeBufferGeometries } from 'three-stdlib';
 import { Decompress } from '@/Compress_Decompress/Decompress';
 

@@ -1,6 +1,7 @@
 import * as OBC from 'openbim-components'
 import * as THREE from 'three'
 import { MyToolComponent } from '../MyToolComponent';
+import WorkerComponent from '@/BimModel/Worker/WorkerComponent';
 
 export class BasicComponent implements OBC.Disposable {
   readonly onDisposed: OBC.Event<unknown> = new OBC.Event();
@@ -41,6 +42,9 @@ export class BasicComponent implements OBC.Disposable {
   }
   initMyTool() {
     const myTool = this.components.tools.get(MyToolComponent);
+    const Worker = this.components.tools.get(WorkerComponent);
+
+
     const toolbars = new OBC.Toolbar(this.components);
     const button = new OBC.Button(this.components);
     button.materialIcon = "add";

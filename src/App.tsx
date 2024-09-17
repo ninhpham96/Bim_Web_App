@@ -1,19 +1,16 @@
-import { useEffect, useRef } from "react";
-import { BasicComponent } from "./BimModel/OpenBIMComponents/src/BasicComponent";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import Viewer from "./pages/Viewers/Viewer";
 
 function App() {
-  const containerRef = useRef<HTMLDivElement | null>(null);
-  useEffect(() => {
-    const bim = new BasicComponent(containerRef.current!);
-    return () => {
-      bim?.dispose();
-    };
-  }, [])
+
   return (
-    <>
-      <div className="relative w-full h-full" ref={containerRef}>
-      </div>
-    </>
+    <BrowserRouter>
+      <Routes>
+        <Route index element={<>Hello</>} />
+        <Route path="*" element={<>Lỗi rồi bạn ơi!!!</>} />
+        <Route path="/viewer" element={<Viewer />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
