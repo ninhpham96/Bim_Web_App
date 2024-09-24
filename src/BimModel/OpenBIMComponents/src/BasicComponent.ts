@@ -43,13 +43,11 @@ export class BasicComponent implements OBC.Disposable {
   initMyTool() {
     const myTool = this.components.tools.get(MyToolComponent);
     const Worker = this.components.tools.get(WorkerComponent);
-
-
     const toolbars = new OBC.Toolbar(this.components);
     const button = new OBC.Button(this.components);
     button.materialIcon = "add";
     button.tooltip = "My Tool";
-    button.onClick.add(myTool.action);
+    button.onClick.add(Worker.loadFile);
     toolbars.addChild(button);
     this.components.ui.addToolbar(toolbars);
   }

@@ -7,10 +7,12 @@
     "dev": "vite --open",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "build:workers": "rollup -c rollup.config.mjs"
   },
   "dependencies": {
     "@preact/signals-react": "^2.2.0",
+    "flowbite-react": "^0.10.1",
     "gsap": "^3.12.5",
     "openbim-components": "^1.5.1",
     "pako": "^2.1.0",
@@ -24,6 +26,9 @@
   "devDependencies": {
     "@eslint/js": "^9.8.0",
     "@preact/signals-react-transform": "^0.4.0",
+    "@rollup/plugin-commonjs": "^26.0.1",
+    "@rollup/plugin-json": "^6.1.0",
+    "@rollup/plugin-node-resolve": "^15.2.4",
     "@types/node": "^22.1.0",
     "@types/pako": "^2.0.3",
     "@types/react": "^18.3.3",
@@ -36,6 +41,7 @@
     "eslint-plugin-react-refresh": "^0.4.9",
     "globals": "^15.9.0",
     "postcss": "^8.4.41",
+    "rollup-plugin-typescript2": "^0.36.0",
     "tailwindcss": "^3.4.9",
     "typescript": "^5.5.3",
     "typescript-eslint": "^8.0.0",
